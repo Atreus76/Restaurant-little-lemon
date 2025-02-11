@@ -1,0 +1,18 @@
+.banner{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.banner__logo > img{
+    max-width: 60px;
+    max-height: 100px;
+    margin-right: 20px;
+}
+
+.banner__name {
+    font-size: 20px;
+    letter-spacing: 4px;
+    color: #495E57;
+    font-weight: bold;
+}

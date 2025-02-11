@@ -1,0 +1,25 @@
+.advertise {
+    background-image: url("../assets/hamburger.jpg");
+    background-position: center center;
+    background-size: cover;
+    height: 200px;
+    border-radius: 14px;
+    position: relative;
+    margin-top: 30px;
+}
+
+.advertise__sales > h1 {
+    color: #fff;
+    position: absolute;
+    margin-left: 20px;
+    margin-top: 30px;
+}
+
+.advertise__info {
+    color: #fff;
+    position: absolute;
+    bottom: 0;
+    margin-left: 20px;
+    margin-bottom: 20px;
+    max-width: 70%;
+}
