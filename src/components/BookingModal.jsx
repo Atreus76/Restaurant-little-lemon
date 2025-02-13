@@ -1,4 +1,4 @@
-import  {cloneElement, useState} from 'react'
+import  { useState } from 'react'
 import "./BookingModal.css"
 import { addDoc, collection, doc, getDocs } from 'firebase/firestore';
 import db from '../firebase';

@@ -7,19 +7,24 @@ const Nav = () => {
   const [showModal, setShowModal] = useState(false)
   const navigate = useNavigate();
 
-  const handleClick = () => {
+  const navigateMenu = () => {
     navigate("/menu"); // Redirect to Menu page
   };
+
+  const navigateLogIn = () => {
+    navigate("/login")
+  }
   return (
     <div className='nav'>
         <div className="nav__pages">Home</div>
-        <div className="nav__pages" onClick={handleClick}>Menu</div>
+        <div className="nav__pages" onClick={navigateMenu}>Menu</div>
         <div className="nav__pages"
           onClick={() => setShowModal(true)}
         >Book</div>
-
         {showModal && <BookingModal onClose={() => setShowModal(false)}/>}
         <div className="nav__pages">About</div>
+        <div className="nav__pages" onClick={navigateLogIn}>Log In</div>
+        
     </div>
   )
 }
