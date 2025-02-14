@@ -4,41 +4,44 @@ import { auth } from "../firebase"
 import { createUserWithEmailAndPassword,
   signInWithEmailAndPassword
  } from "firebase/auth"
+import { useNavigate } from "react-router-dom"
 const LogIn = () => {
   const emailRef = useRef(null)
   const passwordRef = useRef(null)
   const [logIn, setLogIn] = useState(true)
+  const navigate = useNavigate()
 
-  const register = (e) => {
-    e.preventDefault()
+  const register = async(e) => {
+    try {
+      e.preventDefault()
 
-    createUserWithEmailAndPassword(
-      auth,
-      emailRef.current.value,
-      passwordRef.current.value
-    )
-    .then((authUser) => {
-      console.log(authUser)
-    })
-    .catch((error) => {
+      await createUserWithEmailAndPassword(
+        auth,
+        emailRef.current.value,
+        passwordRef.current.value
+      )
+      alert("Registered Successful")
+      
+    } catch (error) {
       alert(error.message)
-    })
+    }
+    
   }
 
-  const signIn = (e) => {
-    e.preventDefault()
+  const signIn = async(e) => {
+    try {
+      e.preventDefault()
 
-    signInWithEmailAndPassword(
-      auth,
-      emailRef.current.value,
-      passwordRef.current.value
-    )
-    .then((authUser) => {
-      console.log(authUser)
-    })
-    .catch((error) => {
+      await signInWithEmailAndPassword(
+        auth,
+        emailRef.current.value,
+        passwordRef.current.value
+      )
+      alert("Log in Successful")
+      navigate("/")
+    } catch (error) {
       alert(error.message)
-    })
+    }
   }
 
   return (

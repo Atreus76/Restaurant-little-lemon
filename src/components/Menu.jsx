@@ -1,7 +1,8 @@
 import { useState, useEffect, useRef } from "react";
 import "./Menu.css"
-import { collection, addDoc, getDocs } from "firebase/firestore";
-import db from "../firebase";
+import { collection, addDoc, getDocs, doc } from "firebase/firestore";
+import db, { auth } from "../firebase";
+import { onAuthStateChanged } from "firebase/auth";
 const Menu = () => {
   const menuItems = [
     { name: "Bruschetta", description: "Toasted bread with tomatoes, basil, and olive oil.", price: "$5.99","rating": 4.5,
@@ -26,6 +27,9 @@ const Menu = () => {
   const [category, setCategory] = useState("All")
   const [searchTerm, setSearchTerm] = useState("")
   const [sortOrder, setSortOrder] = useState("default");
+  const [user, setUser] = useState(null)
+  const [review, setReview]= useState("")
+  const [selectedItem, setSelectedItem] = useState("")
   
 useEffect(()=>{
   const addMenuToFirestore = async() => {
@@ -76,6 +80,36 @@ useEffect(()=>{
     setFilteredMenu(updatedMenu)
 
   },[category, searchTerm, sortOrder])
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setUser(user)
+    })
+
+    return () => unsubscribe()
+  }, [])
+
+  const handleReviewSubmit = async(e) => {
+    e.preventDefault()
+
+    if (!user) {
+      alert("You must be logged in to give review")
+      return
+    }
+    
+    try {
+      await addDoc(collection(db, "reviews"), {
+        review,
+        userEmail: user.email,
+        createdAt: new Date()
+      })
+      setReview("")
+      alert("Review Submitted!")
+    } catch (error) {
+      alert(error.message)
+    } 
+  }
+  
   return (
     <div className="menu">
         <h1 className="menu-title">Our Menu</h1>
@@ -105,6 +139,15 @@ useEffect(()=>{
               <li className="menu-item">
                 <h3>{item.name} - <span>{item.price}</span></h3>
                 <p>{item.description}</p>
+                <p>Add review</p>
+                <form onSubmit={handleReviewSubmit} onClick={() => setSelectedItem(item.name)}>
+                  <textarea
+                    value={review}
+                    onChange={(e) => setReview(e.target.value)}
+                    placeholder="Write your review"
+                  ></textarea>
+                  <button type="submit">Submit your review</button>
+                </form>
               </li>
           </ul>
         </div>
@@ -114,3 +157,4 @@ useEffect(()=>{
 }
 
 export default Menu
+
