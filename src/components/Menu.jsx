@@ -3,6 +3,7 @@ import "./Menu.css"
 import { collection, addDoc, getDocs, doc } from "firebase/firestore";
 import db, { auth } from "../firebase";
 import { onAuthStateChanged } from "firebase/auth";
+import Reviews from "./Reviews";
 const Menu = () => {
   const menuItems = [
     { name: "Bruschetta", description: "Toasted bread with tomatoes, basil, and olive oil.", price: "$5.99","rating": 4.5,
@@ -28,7 +29,7 @@ const Menu = () => {
   const [searchTerm, setSearchTerm] = useState("")
   const [sortOrder, setSortOrder] = useState("default");
   const [user, setUser] = useState(null)
-  const [review, setReview]= useState("")
+  const [review, setReview]= useState({})
   const [selectedItem, setSelectedItem] = useState("")
   
 useEffect(()=>{
@@ -100,7 +101,8 @@ useEffect(()=>{
     try {
       await addDoc(collection(db, "reviews"), {
         review,
-        userEmail: user.email,
+        userId: auth.currentUser.uid,
+        foodId: selectedItem,
         createdAt: new Date()
       })
       setReview("")
@@ -109,6 +111,13 @@ useEffect(()=>{
       alert(error.message)
     } 
   }
+
+  const handleReviewChange = ((item, value) => {
+    setReview((prevReviews) => ({
+      ...prevReviews,
+      [item]: value,
+    }))
+  })
   
   return (
     <div className="menu">
@@ -142,12 +151,13 @@ useEffect(()=>{
                 <p>Add review</p>
                 <form onSubmit={handleReviewSubmit} onClick={() => setSelectedItem(item.name)}>
                   <textarea
-                    value={review}
-                    onChange={(e) => setReview(e.target.value)}
+                    value={review[item.name] || ""}
+                    onChange={(e) => handleReviewChange(item.name, e.target.value)}
                     placeholder="Write your review"
                   ></textarea>
                   <button type="submit">Submit your review</button>
                 </form>
+                <Reviews foodId={item.name}/>
               </li>
           </ul>
         </div>
