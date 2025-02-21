@@ -90,22 +90,30 @@ useEffect(()=>{
     return () => unsubscribe()
   }, [])
 
-  const handleReviewSubmit = async(e) => {
+  const handleReviewSubmit = async(e, itemName) => {
     e.preventDefault()
 
     if (!user) {
       alert("You must be logged in to give review")
       return
     }
+
+    if(!review[itemName] || review[itemName].trim() === ""){
+      alert("Please write a review before submitting")
+      return;
+    }
     
     try {
       await addDoc(collection(db, "reviews"), {
-        review,
+        reviewsText: review[itemName],
         userId: auth.currentUser.uid,
         foodId: selectedItem,
         createdAt: new Date()
       })
-      setReview("")
+      setReview((prevReviews) => ({
+        ...prevReviews,
+        [itemName]: "",
+      }))
       alert("Review Submitted!")
     } catch (error) {
       alert(error.message)
@@ -149,7 +157,7 @@ useEffect(()=>{
                 <h3>{item.name} - <span>{item.price}</span></h3>
                 <p>{item.description}</p>
                 <p>Add review</p>
-                <form onSubmit={handleReviewSubmit} onClick={() => setSelectedItem(item.name)}>
+                <form onSubmit={(e) => handleReviewSubmit(e, item.name)} onClick={() => setSelectedItem(item.name)}>
                   <textarea
                     value={review[item.name] || ""}
                     onChange={(e) => handleReviewChange(item.name, e.target.value)}
