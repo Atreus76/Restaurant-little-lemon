@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react"
 import db from "../firebase"
-import { collection, getDocs, query, where } from "firebase/firestore"
+import { collection, doc, getDoc, getDocs, query, where } from "firebase/firestore"
 
 const Reviews = ({ foodId }) => {
   const [reviews, setReviews] = useState([])
@@ -13,8 +13,19 @@ const Reviews = ({ foodId }) => {
 
     const q = query(collection(db, "reviews"), where("foodId", "==", foodId))
     const querySnapshot = await getDocs(q)
-    const submitedReviews = querySnapshot.docs.map(doc => doc.data())
-    setReviews(submitedReviews)
+    const reviewPromises = querySnapshot.docs.map(async (docSnap) => {
+      const reviewData = docSnap.data()
+
+      const userRef = doc(db, "users", reviewData.userId)
+      const userSnap = await getDoc(userRef)
+
+      return {
+        ...reviewData,
+        userName: userSnap.exists() ? userSnap.data().userName : "Unknown User",
+      }
+    })
+    const reviewsWithUsers = await Promise.all(reviewPromises)
+    setReviews(reviewsWithUsers)
     setShowReviews(true)
 }
   return (
@@ -29,7 +40,7 @@ const Reviews = ({ foodId }) => {
             {reviews.length > 0 ? (
             reviews.map((review, index) => (
                 <p key={index}>
-                    {review.reviewsText}
+                    <strong>{review.userName}</strong>{review.reviewsText}
                 </p>
             ))
         ): (
