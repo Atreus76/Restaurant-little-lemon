@@ -14,6 +14,10 @@ const Nav = () => {
   const navigateLogIn = () => {
     navigate("/login")
   }
+
+  const navigateAbout = () => {
+    navigate("/about")
+  }
   return (
     <div className='nav'>
         <div className="nav__pages">Home</div>
@@ -22,7 +26,7 @@ const Nav = () => {
           onClick={() => setShowModal(true)}
         >Book</div>
         {showModal && <BookingModal onClose={() => setShowModal(false)}/>}
-        <div className="nav__pages">About</div>
+        <div className="nav__pages" onClick={navigateAbout}>About</div>
         <div className="nav__pages" onClick={navigateLogIn}>Log In</div>
         
     </div>
