@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import axios from "axios"
-const API_KEY = "abc"
+
+const API_KEY = import.meta.env.VITE_FOOD_API
 
 const About = () => {
   const handleMenu = async() => {
